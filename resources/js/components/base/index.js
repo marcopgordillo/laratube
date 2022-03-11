@@ -1,0 +1,8 @@
+export { default as BaseInput } from './BaseInput.vue'
+export { default as BaseBtn } from './BaseBtn.vue'
+export { default as PageComponent } from './PageComponent.vue'
+export { default as FlashMessage } from './FlashMessage.vue'
+export { default as Notification } from './Notification.vue'
+export { default as LoadingComponent } from './LoadingComponent.vue'
+export { default as Alert } from './Alert.vue'
+export { default as ErrorsView } from './ErrorsView.vue'
