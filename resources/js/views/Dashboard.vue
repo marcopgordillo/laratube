@@ -13,5 +13,4 @@ import { useMainStore } from '@/store'
 const mainStore = useMainStore()
 const { dashboard } = storeToRefs(mainStore)
 
-mainStore.getDashboardData()
 </script>
