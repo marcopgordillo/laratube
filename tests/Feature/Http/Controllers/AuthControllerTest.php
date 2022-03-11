@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -36,6 +37,7 @@ class AuthControllerTest extends TestCase
         $this->assertDatabaseCount('channels', 1);
         $this->assertDatabaseHas('users', ['name' => $name]);
         $this->assertDatabaseHas('channels', ['name' => $name]);
+        $this->assertTrue(Str::isUuid($response->json('data.user.id')));
     }
 
     public function test_user_can_login()
