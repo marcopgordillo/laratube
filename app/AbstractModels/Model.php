@@ -10,9 +10,4 @@ use Illuminate\Support\Str;
 abstract class Model extends BaseModel
 {
     use HasFactory, HasUuid;
-
-    /**
-     * Stop incrementing id database
-     */
-    public $incrementing = false;
 }

@@ -14,12 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('channels', function (Blueprint $table) {
-            $table->uuid('id');
-            $table->string('title');
+            $table->uuid('id')->primary();
+            $table->string('name');
             $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->foreignId('user_id')->constrained()->onDelete('CASCADE')->onUpdate('CASCADE');
         });
     }
 

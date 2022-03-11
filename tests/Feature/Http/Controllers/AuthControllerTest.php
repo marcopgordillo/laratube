@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -13,18 +14,28 @@ class AuthControllerTest extends TestCase
 
     public function test_user_can_be_registered()
     {
+        $name = $this->faker->name;
+
         $response = $this->postJson(route('auth.register'), [
-            'name'                  => $this->faker->name,
+            'name'                  => $name,
             'email'                 => $this->faker->email,
             'password'              => 'Pa$$w0rd',
             'password_confirmation' => 'Pa$$w0rd',
         ]);
 
         $response->assertCreated()
-                ->assertJsonPath('data.user.id', 1);
+                ->assertJsonCount(1)
+                ->assertJson(fn (AssertableJson $json) =>
+                    $json->has('data', 2, fn ($json) =>
+                        $json->whereType('id', 'string')
+                            ->etc()
+                    )
+                );
 
         $this->assertDatabaseCount('users', 1);
-        $this->assertDatabaseHas('users', ['id' => 1]);
+        $this->assertDatabaseCount('channels', 1);
+        $this->assertDatabaseHas('users', ['name' => $name]);
+        $this->assertDatabaseHas('channels', ['name' => $name]);
     }
 
     public function test_user_can_login()
