@@ -11,15 +11,14 @@
 <script setup>
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useSurveyStore } from '@/store'
 
-const surveyStore = useSurveyStore()
-
-const { notification } = storeToRefs(surveyStore)
+const { notification } = defineProps({
+  notification: Object,
+})
 
 const classNotification = computed(() => ({
-  'bg-emerald-500': notification.value.type === 'success',
-  'bg-red-500': notification.value.type === 'error',
+  'bg-emerald-500': notification.type === 'success',
+  'bg-red-500': notification.type === 'error',
 }))
 
 </script>
