@@ -28,14 +28,35 @@
               <div>
                 <MenuButton class="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                   <span class="sr-only">Open user menu</span>
-                  <img v-if="user.imageUrl" class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
+                  <img v-if="user?.imageUrl" class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
                   <UserCircleIcon v-else class="h-8 w-8 text-gray-200" />
                 </MenuButton>
               </div>
               <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
                 <MenuItems class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <MenuItem v-slot="{ active }">
-                    <a @click="logout" class="cursor-pointer block px-4 py-2 text-sm text-gray-700">
+                    <router-link
+                      :to="{name: 'ChannelsShow', params: { id: user.channel.id } }"
+                      class="cursor-pointer block px-4 py-2 text-sm text-gray-700"
+                      :class="[
+                        active
+                          ? 'bg-gray-300'
+                          : ''
+                      ]"
+                    >
+                      Channel
+                    </router-link>
+                  </MenuItem>
+                  <MenuItem v-slot="{ active }">
+                    <a
+                      @click="logout"
+                      class="cursor-pointer block px-4 py-2 text-sm text-gray-700"
+                      :class="[
+                        active
+                          ? 'bg-gray-300'
+                          : ''
+                      ]"
+                    >
                       Sign out
                     </a>
                   </MenuItem>
@@ -70,9 +91,10 @@
       <div class="pt-4 pb-3 border-t border-gray-700">
         <div class="flex items-center px-5">
           <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+            <img v-if="user?.imageUrl" class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+            <UserCircleIcon v-else class="h-8 w-8 text-gray-200" />
           </div>
-          <div class="ml-3">
+          <div class="ml-3" v-if="user?.id">
             <div class="text-base font-medium leading-none text-white">{{ user.name }}</div>
             <div class="text-sm font-medium leading-none text-gray-400">{{ user.email }}</div>
           </div>
@@ -94,6 +116,7 @@
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { BellIcon, MenuIcon, XIcon, UserCircleIcon } from '@heroicons/vue/outline'
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/store'
 import { useRouter } from 'vue-router'
 

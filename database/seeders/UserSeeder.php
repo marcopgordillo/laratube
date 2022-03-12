@@ -15,7 +15,11 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()->create([
+        User::factory()
+            ->hasChannel(1, [
+                'name'  => 'Marco Gordillo'
+            ])
+            ->create([
             'name'  => 'Marco Gordillo',
             'email' => 'marcopgordillo@gmail.com',
         ]);

@@ -27,22 +27,31 @@ class AuthControllerTest extends TestCase
         $response->assertCreated()
                 ->assertJsonCount(1)
                 ->assertJson(fn (AssertableJson $json) =>
-                    $json->has('data', 2, fn ($json) =>
+                    $json->has('data', fn ($json) =>
                         $json->whereType('id', 'string')
-                            ->etc()
+                            ->whereType('token', 'string')
+                            ->where('name', $name)
+                            ->has('channel', fn ($json) =>
+                                $json->whereType('id', 'string')
+                                    ->where('name', $name)
+                                    ->etc()
+                            )->etc()
                     )
                 );
 
+        $this->assertTrue(Str::isUuid($response->json('data.id')));
+        $this->assertTrue(Str::isUuid($response->json('data.channel.id')));
         $this->assertDatabaseCount('users', 1);
         $this->assertDatabaseCount('channels', 1);
         $this->assertDatabaseHas('users', ['name' => $name]);
         $this->assertDatabaseHas('channels', ['name' => $name]);
-        $this->assertTrue(Str::isUuid($response->json('data.user.id')));
     }
 
     public function test_user_can_login()
     {
-        $user = User::factory()->create([
+        $user = User::factory()
+                ->hasChannel()
+                ->create([
             'password'  => bcrypt('Pa$$w0rd'),
         ]);
 
@@ -52,7 +61,17 @@ class AuthControllerTest extends TestCase
         ]);
 
         $response->assertOk()
-                ->assertJsonPath('data.user.id', $user->id);
+                ->assertJsonPath('data.id', $user->id)
+                ->assertJsonPath('data.channel.id', $user->channel->id)
+                ->assertJson(fn (AssertableJson $json) =>
+                    $json->has('data', fn ($json) =>
+                        $json->whereType('token', 'string')
+                            ->etc()
+                    )
+                );
+
+        $this->assertTrue(Str::isUuid($response->json('data.id')));
+        $this->assertTrue(Str::isUuid($response->json('data.channel.id')));
     }
 
     public function test_cannot_login_with_wrong_credentials()

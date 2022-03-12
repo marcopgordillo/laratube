@@ -8,8 +8,8 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(config => {
   const authStore = useAuthStore()
-  if (authStore.user.token) {
-    config.headers.Authorization = `Bearer ${authStore.user.token}`
+  if (authStore.getUser.token) {
+    config.headers.Authorization = `Bearer ${authStore.getUser.token}`
   }
   return config
 })
@@ -21,7 +21,7 @@ axiosClient.interceptors.response.use(
     const authStore = useAuthStore()
     if (err.response
       && [401, 419].includes(err.response.status)
-      && authStore.user.token
+      && authStore.getUser.token
       ) {
         authStore.logout()
       }

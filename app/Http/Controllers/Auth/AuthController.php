@@ -26,14 +26,7 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
-        $token = $user->createToken('main', ['*'])->plainTextToken;
-
-        return response([
-            'data' => [
-                'user'  => UserResource::make($user),
-                'token' => $token,
-            ],
-        ], Response::HTTP_CREATED);
+        return UserResource::make($user->load('channel')->append('token'));
     }
 
     public function login(LoginRequest $request)
@@ -49,15 +42,10 @@ class AuthController extends Controller
             ])
         );
 
+        /** @var User $user */
         $user = Auth::user();
-        $token = $user->createToken('main', ['*'])->plainTextToken;
 
-        return response([
-            'data' => [
-                'user'  => UserResource::make($user),
-                'token' => $token,
-            ],
-        ], Response::HTTP_OK);
+        return UserResource::make($user->load('channel')->append('token'));
     }
 
     public function logout(Request $request)
