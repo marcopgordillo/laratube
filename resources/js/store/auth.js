@@ -7,7 +7,7 @@ const useAuthStore = defineStore('auth', {
   }),
   getters: {
     getUser: state => state.user,
-    getChannel: state => state.user.channel,
+    getChannel: state => state.user?.channel,
   },
   actions: {
     logout() {

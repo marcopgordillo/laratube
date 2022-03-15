@@ -35,7 +35,6 @@ export default [
   {
     path: '/channels/:id',
     name: 'ChannelsShow',
-    meta: { requiresAuth: true },
     component: () => import('@/views/channels/Show.vue'),
   },
   {

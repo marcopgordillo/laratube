@@ -12,6 +12,10 @@ use Illuminate\Support\Str;
 
 class ChannelController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth:sanctum', 'verified'])->only(['update']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -41,7 +45,7 @@ class ChannelController extends Controller
      */
     public function show(Channel $channel)
     {
-        return ChannelResource::make($channel);
+        return ChannelResource::make($channel->load(['user']));
     }
 
     /**

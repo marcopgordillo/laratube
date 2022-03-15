@@ -97,10 +97,10 @@ async function login() {
     loading.value = false
     router.push({name: 'Dashboard'})
   } catch (err) {
-    if (err.response.status = 422) {
+    loading.value = false
+    if (err.response.status === 422) {
       errors.value = err.response.data.errors
     }
-    loading.value = false
   }
 }
 </script>

@@ -22,9 +22,8 @@ Route::prefix('v1')->group(function() {
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
-
-        Route::apiResource('channels', ChannelController::class);
     });
+    Route::apiResource('channels', ChannelController::class)->only(['show', 'update']);
 
     Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');

@@ -102,7 +102,7 @@ async function register() {
     await authStore.registerUser(user)
     router.push({name: 'Dashboard'})
   } catch (err) {
-    if (err.response.status = 422) {
+    if (err.response.status === 422) {
       errors.value = err.response.data.errors
     }
     loading.value = false
