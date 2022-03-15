@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\AbstractModels\Model;
+use App\Traits\HasSoftDeletes;
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +16,7 @@ use Spatie\MediaLibrary\{
 
 class Channel extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, HasUuid, HasSoftDeletes;
 
     protected $fillable = [
         'name', 'description',

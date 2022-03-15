@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSoftDeletes;
 use App\Traits\HasUuid;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -15,7 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuid;
+    use HasApiTokens, HasFactory, Notifiable, HasUuid, HasSoftDeletes;
 
     /**
      * The attributes that are mass assignable.
