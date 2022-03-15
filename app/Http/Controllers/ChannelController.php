@@ -56,12 +56,9 @@ class ChannelController extends Controller
         $data = $request->validated();
 
         if (isset($data['image'])) {
-            $relativePath = $this->saveImage($data['image']);
-            $data['image'] = $relativePath;
-
-            if ($channel->image) {
-                Storage::delete($channel->image);
-            }
+            $channel->clearMediaCollection('images');
+            $channel->addMediaFromBase64($data['image'])
+                    ->toMediaCollection('images');
         }
 
         $channel->update($data);

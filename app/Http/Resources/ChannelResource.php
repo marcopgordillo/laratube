@@ -19,7 +19,7 @@ class ChannelResource extends JsonResource
             'id'            => $this->id,
             'name'          => $this->name,
             'description'   => $this->description,
-            'image'         => $this->image ? Storage::url($this->image) : null,
+            'image'         => $this->image,
             'user'          => UserResource::make($this->whenLoaded('user')),
         ];
     }
