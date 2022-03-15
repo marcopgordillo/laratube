@@ -15,11 +15,11 @@
         "autoprefixer": "^10.4.2",
         "axios": "^0.25.0",
         "dotenv": "^16.0.0",
-        "happy-dom": "^2.46.3",
+        "happy-dom": "^2.47.0",
         "postcss": "^8.4.8",
         "postcss-import": "^14.0.2",
         "tailwindcss": "^3.0.23",
-        "vite": "^2.8.6",
+        "vite": "2.9.0-beta.2",
         "vitest": "^0.5.9"
     },
     "dependencies": {
@@ -28,7 +28,7 @@
         "@tailwindcss/forms": "^0.4.1",
         "lodash": "^4.17.21",
         "moment": "^2.29.1",
-        "pinia": "^2.0.11",
+        "pinia": "^2.0.12",
         "uuid": "^8.3.2",
         "vue": "^3.2.31",
         "vue-router": "^4.0.14"

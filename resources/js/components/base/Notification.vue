@@ -10,7 +10,6 @@
 
 <script setup>
 import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
 
 const { notification } = defineProps({
   notification: Object,

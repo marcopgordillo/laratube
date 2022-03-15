@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ChannelResource extends JsonResource
 {
@@ -18,7 +19,7 @@ class ChannelResource extends JsonResource
             'id'            => $this->id,
             'name'          => $this->name,
             'description'   => $this->description,
-            'image_url'     => $this->image,
+            'image'         => $this->image ? Storage::url($this->image) : null,
             'user'          => UserResource::make($this->whenLoaded('user')),
         ];
     }
