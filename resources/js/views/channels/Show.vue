@@ -24,7 +24,7 @@
         >
           <input
             id="image"
-          :disabled="!isEditable"
+            :disabled="!isEditable"
             @change="onImageUpload"
             type="file"
             accept="image/*"
@@ -65,7 +65,7 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { PhotographIcon } from '@heroicons/vue/outline'
 import { useChannelStore, useAuthStore } from '@/store'
 import  { Notification, ErrorsView } from '@/components/base';
@@ -73,6 +73,7 @@ import  { Notification, ErrorsView } from '@/components/base';
 const channelStore = useChannelStore()
 const authStore = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 
 const channel = ref({
   name: null,
@@ -96,8 +97,19 @@ watch(
   }
 )
 
+const fetchChannel = async (id) => {
+  try {
+    await channelStore.fetchChannel(id)
+  } catch (err) {
+    if (err.response.status === 404) {
+      router.push('/NotFound')
+    }
+  }
+}
+
+
 if (route.params.id) {
-  channelStore.fetchChannel(route.params.id)
+  fetchChannel(route.params.id)
 }
 
 const notification = channelStore.getNotification
@@ -124,6 +136,8 @@ const submitForm = async () => {
   } catch (err) {
     if (err.response.status === 422) {
       errors.value = err.response.data.errors
+    } else {
+      errors.value = {error: [err.response.data.message]}
     }
   }
 }

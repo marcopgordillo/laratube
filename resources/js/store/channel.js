@@ -23,9 +23,14 @@ const useChannelStore = defineStore('channel', {
   actions: {
     async fetchChannel(payload) {
       this.loading = true
-      const { data } = await API.get(`/channels/${payload}`)
-      this.loading = false
-      this.channel = data.data
+      try {
+        const { data } = await API.get(`/channels/${payload}`)
+        this.loading = false
+        this.channel = data.data
+      } catch (err) {
+        this.loading = false
+        throw err
+      }
     },
     async saveChannel(payload) {
       this.loading = true
