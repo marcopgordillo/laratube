@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,7 @@ Route::prefix('v1')->group(function() {
         Route::get('/user', function (Request $request) {
             return $request->user();
         });
+        Route::patch('/channels/{channel}/subscriptions/{subscription}', SubscriptionController::class)->name('channels.subscription');
     });
     Route::apiResource('channels', ChannelController::class)->only(['show', 'update']);
 

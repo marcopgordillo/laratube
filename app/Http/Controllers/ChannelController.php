@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateChannelRequest;
 use App\Http\Resources\ChannelResource;
 use App\Models\Channel;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -16,6 +17,7 @@ class ChannelController extends Controller
     {
         $this->middleware(['auth:sanctum', 'verified'])->only(['update']);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,9 +45,14 @@ class ChannelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Channel $channel)
+    public function show(Request $request, Channel $channel)
     {
-        return ChannelResource::make($channel->load(['user']));
+        $channel = $channel->load(['user'])
+                        ->loadCount(['users']);
+
+        $channel['is_subscribed'] = $channel->users->contains($request->logged_id);
+
+        return ChannelResource::make($channel);
     }
 
     /**

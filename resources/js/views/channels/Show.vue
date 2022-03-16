@@ -7,7 +7,7 @@
         :errors="errors"
         @close="errors = {}"
       />
-      <div class="relative mb-6 w-1/3 flex flex-col items-center justify-center">
+      <div class="relative mb-4 w-1/3 flex flex-col items-center justify-center">
         <img
           class="w-64 h-64 object-cover"
           v-if="channel?.image"
@@ -19,12 +19,12 @@
         </span>
         <button
           type="button"
-          :disabled="!isEditable"
+          v-if="isEditable"
           class="relative overflow-hidden mt-2 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300"
         >
           <input
             id="image"
-            :disabled="!isEditable"
+            v-if="isEditable"
             @change="onImageUpload"
             type="file"
             accept="image/*"
@@ -32,6 +32,19 @@
           />
           Change
         </button>
+        <button type="button"
+          @click="toggleSubscribe"
+          v-else-if="isLogged"
+          class="mt-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-500 disabled:hover:bg-gray-500"
+        >
+          {{ isSubscribed ? 'Unsubscribe' : 'Subscribe' }} {{ subscriptions  }}
+        </button>
+        <span
+          v-if="isEditable"
+          class="bg-red-500 text-white text-sm font-semibold block rounded px-4 py-2 mt-3"
+        >
+          {{ subscriptions }} Subscriptors
+        </span>
       </div>
       <div class="mb-6 w-1/2">
         <label for="name" class="sr-only">Name</label>
@@ -56,7 +69,12 @@
         ></textarea>
       </div>
       <div>
-        <button type="submit" :disabled="!isEditable" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-500 disabled:hover:bg-gray-500">Save</button>
+        <button type="submit"
+          v-if="isEditable"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Save
+        </button>
       </div>
     </form>
     <Notification :notification="notification" />
@@ -83,10 +101,14 @@ const channel = ref({
 
 const errors = ref({})
 const loading = channelStore.getLoading
+const subscriptions = computed(() => channel.value.subscriptions)
+const isSubscribed = computed(() => channel.value.is_subscribed)
 
 const isEditable = computed(() => {
   return authStore.getUser?.id && authStore.getUser.id === channel.value.user?.id
 })
+
+const isLogged = computed(() => authStore.getUser?.id !== undefined)
 
 watch(
   () => channelStore.getChannel,
@@ -97,9 +119,9 @@ watch(
   }
 )
 
-const fetchChannel = async (id) => {
+const fetchChannel = async (id, loggedId = null) => {
   try {
-    await channelStore.fetchChannel(id)
+    await channelStore.fetchChannel({id, loggedId})
   } catch (err) {
     if (err.response.status === 404) {
       router.push('/NotFound')
@@ -109,7 +131,7 @@ const fetchChannel = async (id) => {
 
 
 if (route.params.id) {
-  fetchChannel(route.params.id)
+  fetchChannel(route.params.id, authStore.getUser?.id)
 }
 
 const notification = channelStore.getNotification
@@ -133,6 +155,19 @@ const submitForm = async () => {
       type: 'success',
       message: 'Channel was successfully updated!',
     })
+  } catch (err) {
+    if (err.response.status === 422) {
+      errors.value = err.response.data.errors
+    } else {
+      errors.value = {error: [err.response.data.message]}
+    }
+  }
+}
+
+const toggleSubscribe = async () => {
+  try {
+    errors.value = {}
+    await channelStore.toggleSubscribe(authStore.getUser.id)
   } catch (err) {
     if (err.response.status === 422) {
       errors.value = err.response.data.errors

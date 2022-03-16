@@ -21,10 +21,10 @@ const useChannelStore = defineStore('channel', {
     getLoading: state => state.loading,
   },
   actions: {
-    async fetchChannel(payload) {
+    async fetchChannel({id, loggedId}) {
       this.loading = true
       try {
-        const { data } = await API.get(`/channels/${payload}`)
+        const { data } = await API.get(`/channels/${id}?logged_id=${loggedId}`)
         this.loading = false
         this.channel = data.data
       } catch (err) {
@@ -36,6 +36,17 @@ const useChannelStore = defineStore('channel', {
       this.loading = true
       try {
         const { data } = await API.put(`/channels/${this.channel.id}`, payload)
+        this.loading = false
+        this.channel = data.data
+      } catch (err) {
+        this.loading = false
+        throw err
+      }
+    },
+    async toggleSubscribe(user_id) {
+      this.loading = true
+      try {
+        const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions/${user_id}`)
         this.loading = false
         this.channel = data.data
       } catch (err) {

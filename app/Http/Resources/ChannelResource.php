@@ -21,6 +21,8 @@ class ChannelResource extends JsonResource
             'description'   => $this->description,
             'image'         => $this->image,
             'user'          => UserResource::make($this->whenLoaded('user')),
+            'subscriptions' => $this->users_count,
+            'is_subscribed' => $this->is_subscribed,
         ];
     }
 }

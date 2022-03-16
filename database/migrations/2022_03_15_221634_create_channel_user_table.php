@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('channels', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id')->index();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::create('channel_user', function (Blueprint $table) {
+            $table->uuid('channel_id');
+            $table->uuid('user_id');
+            $table->foreign('channel_id')->references('id')->on('channels')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->primary(['channel_id', 'user_id']);
+            $table->timestamps();
         });
     }
 
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('channels');
+        Schema::dropIfExists('channel_user');
     }
 };
