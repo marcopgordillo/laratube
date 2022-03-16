@@ -1,13 +1,10 @@
 import { defineStore } from 'pinia'
+import numeral from 'numeral'
 import { API } from '@/services'
 
 const useChannelStore = defineStore('channel', {
   state: () => ({
-    channel: {
-      name: null,
-      description: null,
-      image: null
-    },
+    channel: {},
     notification: {
       show: false,
       type: null,
@@ -19,6 +16,9 @@ const useChannelStore = defineStore('channel', {
     getChannel: state => state.channel,
     getNotification: state => state.notification,
     getLoading: state => state.loading,
+    getSubscriptions: state => state.channel.subscriptions
+                                ? numeral(state.channel.subscriptions).format('0a')
+                                : null,
   },
   actions: {
     async fetchChannel({id, loggedId}) {

@@ -14,6 +14,7 @@ specifiers:
   happy-dom: ^2.47.2
   lodash: ^4.17.21
   moment: ^2.29.1
+  numeral: ^2.0.6
   pinia: ^2.0.12
   postcss: ^8.4.11
   postcss-import: ^14.0.2
@@ -30,6 +31,7 @@ dependencies:
   '@tailwindcss/forms': 0.4.1_tailwindcss@3.0.23
   lodash: 4.17.21
   moment: 2.29.1
+  numeral: 2.0.6
   pinia: 2.0.12_vue@3.2.31
   uuid: 8.3.2
   vue: 3.2.31
@@ -1163,6 +1165,10 @@ packages:
     resolution: {integrity: sha1-LRDAa9/TEuqXd2laTShDlFa3WUI=}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /numeral/2.0.6:
+    resolution: {integrity: sha1-StCAk21EPCVhrtnyGX7//iX05QY=}
+    dev: false
 
   /object-hash/2.2.0:
     resolution: {integrity: sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==}

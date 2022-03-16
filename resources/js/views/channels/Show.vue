@@ -101,7 +101,7 @@ const channel = ref({
 
 const errors = ref({})
 const loading = channelStore.getLoading
-const subscriptions = computed(() => channel.value.subscriptions)
+const subscriptions = computed(() => channelStore.getSubscriptions)
 const isSubscribed = computed(() => channel.value.is_subscribed)
 
 const isEditable = computed(() => {
