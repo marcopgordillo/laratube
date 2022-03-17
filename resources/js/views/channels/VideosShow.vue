@@ -8,9 +8,11 @@
         @close="errors = {}"
       />
       <div class="relative mb-4 w-1/3 flex flex-col items-center justify-center">
-        <div v-if="isUploading">
-          <label for="progress">Uploading progress...</label>
-          <progress id="progress" value="32" max="100"> 32% </progress>
+        <div v-if="Object.keys(progress).length">
+          <div v-for="key in Object.keys(progress)" :key="key">
+            <label :for="key">{{ key }}</label>
+            <progress :id="key" :value="progress[key]" max="100"> {{ progress[key] }} </progress>
+          </div>
         </div>
         <button
           type="button"
@@ -48,6 +50,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { UploadIcon } from '@heroicons/vue/outline'
 import { useChannelStore, useAuthStore } from '@/store'
 import  { Notification, ErrorsView } from '@/components/base';
@@ -66,8 +69,7 @@ const channel = ref({
 const videos = ref(null)
 
 const errors = ref({})
-const loading = ref(false)
-const isUploading = ref(false)
+const { progress, loading } = storeToRefs(channelStore)
 const notification = channelStore.getNotification
 
 const isEditable = computed(() => {
@@ -80,13 +82,6 @@ watch(
     channel.value = {
       ...JSON.parse(JSON.stringify(newVal)),
     }
-  }
-)
-
-watch(
-  () => channelStore.getLoading,
-  (newVal, oldVal) => {
-    loading.value = newVal
   }
 )
 
@@ -105,13 +100,12 @@ if (route.params.id) {
 }
 
 const submitForm = () => {
-  isUploading.value = true
   const videosToUpload = Array.from(videos.value.files)
 
   videosToUpload.forEach(async (video) => {
     const form = new FormData()
     form.append('video', video)
-    form.append('name', video.name)
+    form.append('title', video.name)
     try {
       errors.value = {}
       await channelStore.uploadVideo(form)
@@ -125,8 +119,6 @@ const submitForm = () => {
       } else {
         errors.value = {error: [err.response.data.message]}
       }
-    } finally {
-      isUploading.value = false
     }
   })
 }

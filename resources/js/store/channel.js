@@ -11,11 +11,13 @@ const useChannelStore = defineStore('channel', {
       message: null,
     },
     loading: false,
+    progress: {},
   }),
   getters: {
     getChannel: state => state.channel,
     getNotification: state => state.notification,
     getLoading: state => state.loading,
+    getProgress: state => state.progress,
     getSubscriptions: state => state.channel.subscriptions
                                 ? numeral(state.channel.subscriptions).format('0a')
                                 : null,
@@ -53,6 +55,9 @@ const useChannelStore = defineStore('channel', {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          onUploadProgress: (event) => {
+            this.progress[payload.get('title')] = Math.ceil((event.loaded / event.total) * 100)
+          }
         })
       } catch (err) {
         throw err

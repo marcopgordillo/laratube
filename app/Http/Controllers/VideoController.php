@@ -33,6 +33,7 @@ class VideoController extends Controller
         if (isset($data['video'])) {
             // $channel->clearMediaCollection('videos');
             $channel->addMedia($data['video'])
+                    ->withCustomProperties(['title' => $data['title']])
                     ->toMediaCollection('videos');
         }
 
