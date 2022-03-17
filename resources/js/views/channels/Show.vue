@@ -108,7 +108,7 @@ const channel = ref({
 })
 
 const errors = ref({})
-const loading = channelStore.getLoading
+const loading = ref(false)
 const subscriptions = computed(() => channelStore.getSubscriptions)
 const isSubscribed = computed(() => channel.value.is_subscribed)
 
@@ -124,6 +124,13 @@ watch(
     channel.value = {
       ...JSON.parse(JSON.stringify(newVal)),
     }
+  }
+)
+
+watch(
+  () => channelStore.getLoading,
+  (newVal, oldVal) => {
+    loading.value = newVal
   }
 )
 

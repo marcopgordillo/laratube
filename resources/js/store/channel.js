@@ -40,24 +40,21 @@ const useChannelStore = defineStore('channel', {
             'Content-Type': 'multipart/form-data',
           },
         })
-        this.loading = false
         this.channel = data.data
       } catch (err) {
-        this.loading = false
         throw err
+      } finally {
+        this.loading = false
       }
     },
     async uploadVideo(payload) {
-      this.loading = true
       try {
         await API.post(`/channels/${this.channel.id}/video`, payload, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         })
-        this.loading = false
       } catch (err) {
-        this.loading = false
         throw err
       }
     },
@@ -65,11 +62,11 @@ const useChannelStore = defineStore('channel', {
       this.loading = true
       try {
         const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions`)
-        this.loading = false
         this.channel = data.data
       } catch (err) {
-        this.loading = false
         throw err
+      } finally {
+        this.loading = false
       }
     },
     notify({ message, type }) {

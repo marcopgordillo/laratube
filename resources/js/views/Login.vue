@@ -94,13 +94,15 @@ async function login() {
   errors.value = {}
   try {
     await authStore.login(user)
-    loading.value = false
     router.push({name: 'Dashboard'})
   } catch (err) {
-    loading.value = false
     if (err.response.status === 422) {
       errors.value = err.response.data.errors
+    } else {
+      errors.value = {error: [err.response.data.message]}
     }
+  } finally {
+    loading.value = false
   }
 }
 </script>

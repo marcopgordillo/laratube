@@ -8,13 +8,18 @@
         @close="errors = {}"
       />
       <div class="relative mb-4 w-1/3 flex flex-col items-center justify-center">
+        <div v-if="isUploading">
+          <label for="progress">Uploading progress...</label>
+          <progress id="progress" value="32" max="100"> 32% </progress>
+        </div>
         <button
           type="button"
-          v-if="isEditable"
+          v-else-if="isEditable"
           class="relative overflow-hidden mt-2 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300"
         >
+          <label for="videos" class="sr-only">Upload your videos</label>
           <input
-            id="image"
+            id="videos"
             ref="videos"
             multiple
             v-if="isEditable"
@@ -22,7 +27,6 @@
             accept="video/*"
             class="absolute inset-0 opacity-0 cursor-pointer"
           />
-          Change
           <span class="flex items-center justify-center h-32 w-32 rounded-full overflow-hidden bg-gray-100">
             <UploadIcon class="h-[80%] w-[80%] text-gray-300" />
           </span>
@@ -62,7 +66,8 @@ const channel = ref({
 const videos = ref(null)
 
 const errors = ref({})
-const loading = channelStore.getLoading
+const loading = ref(false)
+const isUploading = ref(false)
 const notification = channelStore.getNotification
 
 const isEditable = computed(() => {
@@ -75,6 +80,13 @@ watch(
     channel.value = {
       ...JSON.parse(JSON.stringify(newVal)),
     }
+  }
+)
+
+watch(
+  () => channelStore.getLoading,
+  (newVal, oldVal) => {
+    loading.value = newVal
   }
 )
 
@@ -93,7 +105,7 @@ if (route.params.id) {
 }
 
 const submitForm = () => {
-
+  isUploading.value = true
   const videosToUpload = Array.from(videos.value.files)
 
   videosToUpload.forEach(async (video) => {
@@ -113,6 +125,8 @@ const submitForm = () => {
       } else {
         errors.value = {error: [err.response.data.message]}
       }
+    } finally {
+      isUploading.value = false
     }
   })
 }
