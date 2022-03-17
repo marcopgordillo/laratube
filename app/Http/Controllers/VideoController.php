@@ -32,7 +32,7 @@ class VideoController extends Controller
         $data = $request->validated();
 
         if (isset($data['video'])) {
-            // $channel->clearMediaCollection('videos');
+            $channel->clearMediaCollection('videos');
             $channel->addMedia($data['video'])
                     ->withCustomProperties(['title' => $data['title']])
                     ->toMediaCollection('videos');

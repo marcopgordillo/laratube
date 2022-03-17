@@ -1,16 +1,22 @@
 <template>
-  <div class="flex justify-between space-x-2 mb-2 items-center">
-    <label :for="item">{{ item }}</label>
-    <progress :id="item" :value="progress[item]" max="100">
-      <div class="bg-gray-100 rounded-sm shadow-[0_2px_3px_rgba(0,0,0,0.25)_inset] w-16 h-1.5 relative block">
-        <span
-          class="bg-blue-500 rounded-sm block -indent-[9999px]"
-          :style="{width: `${progress[item]}%`}"
-        >
+  <div class="relative pt-2 max-w-full">
+    <div class="flex mb-2 items-center justify-between space-x-6">
+      <div>
+        <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-600 bg-indigo-200">
+          {{ item }}
+        </span>
+      </div>
+      <div class="text-right">
+        <span class="text-xs font-semibold inline-block text-indigo-600">
           {{ progress[item] }}%
         </span>
       </div>
-    </progress>
+    </div>
+    <div class="overflow-hidden h-3 mb-4 text-xs flex rounded bg-indigo-200">
+      <div
+        class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500 w-progress"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -28,18 +34,7 @@ defineProps({
 </script>
 
 <style scoped>
-progress[value] {
-  @apply w-60 h-5 appearance-none;
-
-  &::-moz-progress-bar {
-   @apply bg-[#eee] rounded-[2px] shadow-[0_2px_5px_rgba(0,0,0,0.25)_inset];
+  .w-progress {
+    @apply w-[v-bind(`${progress[item]}%`)];
   }
-  &::-webkit-progress-bar {
-   @apply bg-[#eee] rounded-[2px] shadow-[0_2px_5px_rgba(0,0,0,0.25)_inset];
-  }
-
-  &::-webkit-progress-value {
-   @apply rounded-sm bg-progress animate-progress-stripes before:content-[v-bind(progress[item])+'%'] before:absolute before:right-0 before:-top-[125%] after:content-none after:w-1.5 after:h-1.5 after:absolute after:rounded-full after:right-2 after:top-2 after:bg-white;
-  }
-}
 </style>

@@ -7,7 +7,7 @@
         :errors="errors"
         @close="errors = {}"
       />
-      <div v-if="Object.keys(progress).length" class="flex flex-col">
+      <div v-if="Object.keys(progress).length">
         <ProgressBar v-for="key in Object.keys(progress)" :key="key" :item="key" :progress="progress" />
       </div>
       <div
@@ -107,7 +107,6 @@ const submitForm = () => {
     try {
       errors.value = {}
       await channelStore.uploadVideo(form)
-      channelStore.deleteProgress(video.name)
       channelStore.notify({
         type: 'success',
         message: 'Channel was successfully updated!',
@@ -118,6 +117,8 @@ const submitForm = () => {
       } else {
         errors.value = {error: [err.response.data.message]}
       }
+    } finally {
+      channelStore.deleteProgress(video.name)
     }
   })
 }

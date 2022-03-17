@@ -11,9 +11,7 @@ const useChannelStore = defineStore('channel', {
       message: null,
     },
     loading: false,
-    progress: {
-      'wwewe': 60
-    },
+    progress: {},
   }),
   getters: {
     getChannel: state => state.channel,
