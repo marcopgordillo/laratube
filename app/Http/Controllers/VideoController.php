@@ -39,8 +39,11 @@ class VideoController extends Controller
         if (isset($data['video'])) {
             $channel->clearMediaCollection('videos');
             try {
-                $media = $channel->addMedia($data['video'])
-                    ->withCustomProperties(['title' => $data['title']])
+                $video = $channel->addMedia($data['video'])
+                    ->withCustomProperties([
+                        'title'         => $data['title'],
+                        'percentage'    => 0,
+                    ])
                     ->toMediaCollection('videos');
             } catch (FileDoesNotExist $e) {
                 throw ValidationException::withMessages([
@@ -52,7 +55,7 @@ class VideoController extends Controller
                 ]);
             }
 
-            $this->dispatch(new ConvertForStreaming($media));
+            $this->dispatch(new ConvertForStreaming($video));
         }
 
         $channel->append('videos');

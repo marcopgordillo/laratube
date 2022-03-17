@@ -2,13 +2,16 @@
 
 namespace App\Jobs\Videos;
 
-use App\Models\Media;
+use Illuminate\Support\Facades\Log;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class ConvertForStreaming implements ShouldQueue
 {
@@ -19,7 +22,7 @@ class ConvertForStreaming implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public Media $media)
+    public function __construct(public Media $video)
     {
         //
     }
@@ -31,6 +34,21 @@ class ConvertForStreaming implements ShouldQueue
      */
     public function handle()
     {
-        echo 'converted';
+        $low = (new X264('aac'))->setKiloBitrate(100); //360p
+        $mid = (new X264('aac'))->setKiloBitrate(250);
+        $high = (new X264('aac'))->setKiloBitrate(500);
+
+        $pathToFile = "videos/{$this->video->id}/{$this->video->id}.m3u8";
+
+        FFMpeg::fromDisk('public')
+            ->open("{$this->video->id}/{$this->video->getAttribute('file_name')}")
+            ->exportForHLS()
+            ->onProgress(function ($percentage) {
+                $this->video->setCustomProperty('percentage', $percentage)->save();
+            })
+            ->addFormat($low)
+            ->addFormat($mid)
+            ->addFormat($high)
+            ->save($pathToFile);
     }
 }
