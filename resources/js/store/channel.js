@@ -11,7 +11,9 @@ const useChannelStore = defineStore('channel', {
       message: null,
     },
     loading: false,
-    progress: {},
+    progress: {
+      'wwewe': 60
+    },
   }),
   getters: {
     getChannel: state => state.channel,
@@ -63,7 +65,7 @@ const useChannelStore = defineStore('channel', {
         throw err
       }
     },
-    async toggleSubscribe(user_id) {
+    async toggleSubscribe() {
       this.loading = true
       try {
         const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions`)
@@ -79,6 +81,9 @@ const useChannelStore = defineStore('channel', {
       this.notification.type = type
       this.notification.message = message
       setTimeout(() => this.notification.show = false, 3000)
+    },
+    deleteProgress(key) {
+      delete this.progress[key]
     },
   }
 })

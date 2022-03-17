@@ -7,16 +7,14 @@
         :errors="errors"
         @close="errors = {}"
       />
-      <div class="relative mb-4 w-1/3 flex flex-col items-center justify-center">
-        <div v-if="Object.keys(progress).length">
-          <div v-for="key in Object.keys(progress)" :key="key">
-            <label :for="key">{{ key }}</label>
-            <progress :id="key" :value="progress[key]" max="100"> {{ progress[key] }} </progress>
-          </div>
-        </div>
+      <div v-if="Object.keys(progress).length" class="flex flex-col">
+        <ProgressBar v-for="key in Object.keys(progress)" :key="key" :item="key" :progress="progress" />
+      </div>
+      <div
+        v-else-if="isEditable"
+        class="relative mb-4 w-1/3 flex flex-col items-center justify-center">
         <button
           type="button"
-          v-else-if="isEditable"
           class="relative overflow-hidden mt-2 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300"
         >
           <label for="videos" class="sr-only">Upload your videos</label>
@@ -53,7 +51,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { UploadIcon } from '@heroicons/vue/outline'
 import { useChannelStore, useAuthStore } from '@/store'
-import  { Notification, ErrorsView } from '@/components/base';
+import  { Notification, ErrorsView, ProgressBar } from '@/components/base';
 
 const channelStore = useChannelStore()
 const authStore = useAuthStore()
@@ -109,6 +107,7 @@ const submitForm = () => {
     try {
       errors.value = {}
       await channelStore.uploadVideo(form)
+      channelStore.deleteProgress(video.name)
       channelStore.notify({
         type: 'success',
         message: 'Channel was successfully updated!',

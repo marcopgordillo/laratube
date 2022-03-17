@@ -7,6 +7,7 @@ use App\Http\Resources\ChannelResource;
 use App\Models\Channel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class VideoController extends Controller
 {
@@ -17,7 +18,7 @@ class VideoController extends Controller
      */
     public function index(Channel $channel)
     {
-        $videos = $channel->videos;
+        return $channel->videos;
     }
 
     /**
@@ -26,7 +27,7 @@ class VideoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreVideoRequest $request, Channel $channel)
+    public function store(StoreVideoRequest $request, Channel $channel): JsonResource
     {
         $data = $request->validated();
 
