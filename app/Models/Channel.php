@@ -66,6 +66,13 @@ class Channel extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->width(256)
             ->height(256)
-            ->sharpen(10);
+            ->sharpen(10)
+            ->performOnCollections('images');
+
+        $this->addMediaConversion('thumb')
+            ->width(368)
+            ->height(232)
+            ->extractVideoFrameAtSecond(20)
+            ->performOnCollections('videos');
     }
 }
