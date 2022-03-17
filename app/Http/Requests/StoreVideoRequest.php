@@ -6,7 +6,7 @@ use App\Models\Channel;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UpdateChannelRequest extends FormRequest
+class StoreVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,8 +29,7 @@ class UpdateChannelRequest extends FormRequest
     {
         return [
             'name'          => ['required', 'string', 'max:255'],
-            'description'   => ['nullable', 'string', 'max:2000'],
-            'image'         => ['nullable', 'image'],
+            'video'         => ['required', 'mimetypes:video/*'],
         ];
     }
 }

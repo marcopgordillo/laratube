@@ -1,7 +1,14 @@
 <template>
   <div class="mt-5 container mx-auto">
+    <router-link
+      v-if="channel.id"
+      :to="{ name: 'VideosShow', params: { id: channel.id } }"
+      class="bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow border border-red-500 focus:ring-4 focus:ring-red-300 px-4 py-2"
+    >
+      Upload Videos
+    </router-link>
     <loading-component v-if="loading"></loading-component>
-    <form @submit.prevent="submitForm" class="flex flex-col items-center">
+    <form v-else @submit.prevent="submitForm" class="flex flex-col items-center">
       <ErrorsView
         v-if="Object.keys(errors).length"
         :errors="errors"
@@ -96,6 +103,7 @@ const router = useRouter()
 const channel = ref({
   name: null,
   image: null,
+  image_upload: null,
   description: null,
 })
 
@@ -129,7 +137,6 @@ const fetchChannel = async (id, loggedId = null) => {
   }
 }
 
-
 if (route.params.id) {
   fetchChannel(route.params.id, authStore.getUser?.id)
 }
@@ -141,16 +148,25 @@ const onImageUpload = (ev) => {
 
   const reader = new FileReader()
   reader.onload = () => {
-    // to backend
+    // to frontend
     channel.value.image = reader.result
+    // to backend
+    channel.value.image_upload = file
   }
   reader.readAsDataURL(file)
 }
 
 const submitForm = async () => {
+  const form = new FormData()
+  form.append('name', channel.value.name)
+  form.append('description', channel.value.description)
+  if (channel.value.image_upload) {
+    form.append('image', channel.value.image_upload)
+  }
+  form.append('_method', 'PUT')
   try {
     errors.value = {}
-    await channelStore.saveChannel(channel.value)
+    await channelStore.saveChannel(form)
     channelStore.notify({
       type: 'success',
       message: 'Channel was successfully updated!',

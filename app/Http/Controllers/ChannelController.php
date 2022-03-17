@@ -55,20 +55,13 @@ class ChannelController extends Controller
         return ChannelResource::make($channel);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateChannelRequest $request, Channel $channel)
     {
         $data = $request->validated();
 
         if (isset($data['image'])) {
             $channel->clearMediaCollection('images');
-            $channel->addMediaFromBase64($data['image'])
+            $channel->addMedia($data['image'])
                     ->toMediaCollection('images');
         }
 

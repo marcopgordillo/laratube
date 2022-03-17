@@ -33,6 +33,12 @@ export default [
     component: () => import('@/views/Dashboard.vue'),
   },
   {
+    path: '/channels/:id/videos',
+    name: 'VideosShow',
+    meta: { requiresAuth: true },
+    component: () => import('@/views/channels/VideosShow.vue'),
+  },
+  {
     path: '/channels/:id',
     name: 'ChannelsShow',
     component: () => import('@/views/channels/Show.vue'),

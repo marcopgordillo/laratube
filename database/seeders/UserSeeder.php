@@ -33,14 +33,14 @@ class UserSeeder extends Seeder
             'email' => 'jane@doe.com',
         ]);
 
-        User::factory(100)
-            ->hasChannel()
-            ->hasAttached($joe->channel)
-            ->create();
+        // User::factory(100)
+        //     ->hasChannel()
+        //     ->hasAttached($joe->channel)
+        //     ->create();
 
-        User::factory(50)
-            ->hasChannel()
-            ->hasAttached($jane->channel)
-            ->create();
+        // User::factory(50)
+        //     ->hasChannel()
+        //     ->hasAttached($jane->channel)
+        //     ->create();
     }
 }

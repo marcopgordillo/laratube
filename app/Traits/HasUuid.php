@@ -17,7 +17,9 @@ trait HasUuid
          * Change how to generate primary key value
          */
         static::creating(function (Model $model) {
-            $model->{$model->getKeyName()} = (string) Str::uuid();
+            if (is_null($model->getOriginal($model->getKeyName()))) {
+                $model->{$model->getKeyName()} = Str::uuid()->toString();
+            }
         });
     }
 

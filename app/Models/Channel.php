@@ -39,10 +39,25 @@ class Channel extends Model implements HasMedia
     {
         return Attribute::make(
             get: fn ($value, $attributes) =>
-                $this->media->first()
-                    ? $this->media->first()->getFullUrl('thumb')
+                $this->media()
+                    ->where('collection_name', 'images')
+                    ->first()
+                    ? $this->media()
+                        ->where('collection_name', 'images')
+                        ->first()
+                        ->getFullUrl('thumb')
                     : null
+        );
+    }
 
+    public function videos(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) =>
+                $this->media()
+                    ->where('collection_name', 'videos')
+                    ->get()
+                    ->map(fn (Media $video) => $video->getFullUrl())
         );
     }
 

@@ -35,9 +35,27 @@ const useChannelStore = defineStore('channel', {
     async saveChannel(payload) {
       this.loading = true
       try {
-        const { data } = await API.put(`/channels/${this.channel.id}`, payload)
+        const { data } = await API.post(`/channels/${this.channel.id}`, payload, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
         this.loading = false
         this.channel = data.data
+      } catch (err) {
+        this.loading = false
+        throw err
+      }
+    },
+    async uploadVideo(payload) {
+      this.loading = true
+      try {
+        await API.post(`/channels/${this.channel.id}/video`, payload, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        this.loading = false
       } catch (err) {
         this.loading = false
         throw err
@@ -46,7 +64,7 @@ const useChannelStore = defineStore('channel', {
     async toggleSubscribe(user_id) {
       this.loading = true
       try {
-        const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions/${user_id}`)
+        const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions`)
         this.loading = false
         this.channel = data.data
       } catch (err) {
