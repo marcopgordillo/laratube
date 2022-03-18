@@ -15,6 +15,7 @@ const useChannelStore = defineStore('channel', {
     uploads: [],
     progress: {},
     intervals: {},
+    currentVideo: {},
   }),
   getters: {
     getChannel: state => state.channel,
@@ -23,6 +24,7 @@ const useChannelStore = defineStore('channel', {
     getSubscriptions: state => state.channel.subscriptions
                                 ? numeral(state.channel.subscriptions).format('0a')
                                 : null,
+    getCurrentVideo: state => state.currentVideo,
   },
   actions: {
     async fetchChannel({id, loggedId}) {
@@ -93,6 +95,17 @@ const useChannelStore = defineStore('channel', {
       try {
         const { data } = await API.patch(`/channels/${this.channel.id}/subscriptions`)
         this.channel = data.data
+      } catch (err) {
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+    async getVideo(id) {
+      try {
+        this.loading = true
+        const { data } = await API.get(`/videos/${id}`)
+        this.currentVideo = data.data
       } catch (err) {
         throw err
       } finally {
