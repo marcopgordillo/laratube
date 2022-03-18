@@ -13,7 +13,13 @@
       </div>
     </div>
     <div class="flex h-4 overflow-hidden text-xs bg-slate-200 rounded">
-      <div class="flex flex-col justify-center overflow-hidden text-white whitespace-nowrap bg-blue-600 transition-[width] ease duration-75 bg-striped bg-[length:1rem_1rem] animate-progress-striped w-progress"></div>
+      <div
+        role="progressbar"
+        :aria-valuenow="progress[item]"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        class="flex flex-col justify-center overflow-hidden text-white whitespace-nowrap bg-blue-600 transition-[width] ease duration-75 bg-striped bg-[length:1rem_1rem] animate-progress-striped w-progress"
+      ></div>
     </div>
   </div>
 </template>
