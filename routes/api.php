@@ -25,7 +25,8 @@ Route::prefix('v1')->group(function() {
             return $request->user();
         });
         Route::patch('/channels/{channel}/subscriptions', SubscriptionController::class)->name('channels.subscription');
-        Route::post('/channels/{channel}/video', [VideoController::class, 'store'])->name('channels.video');
+        Route::post('/channels/{channel}/videos', [VideoController::class, 'store'])->name('channels.videos.store');
+        Route::get('/videos/{video}', [VideoController::class, 'show'])->name('channels.videos.show');
     });
     Route::apiResource('channels', ChannelController::class)->only(['show', 'update']);
 

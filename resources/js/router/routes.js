@@ -44,6 +44,11 @@ export default [
     component: () => import('@/views/channels/Show.vue'),
   },
   {
+    path: '/videos/:id',
+    name: 'ViewVideo',
+    component: () => import('@/views/channels/ViewVideo.vue'),
+  },
+  {
     path: "/unauthorized",
     name: "Unauthorized",
     meta: { layout: 'empty' },

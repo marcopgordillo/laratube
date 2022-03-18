@@ -72,6 +72,7 @@ class Channel extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->width(368)
             ->height(232)
+            ->nonQueued()
             ->extractVideoFrameAtSecond(20)
             ->performOnCollections('videos');
     }

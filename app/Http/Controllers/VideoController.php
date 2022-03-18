@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Resources\ChannelResource;
+use App\Http\Resources\VideoResource;
 use App\Jobs\Videos\ConvertForStreaming;
 use App\Models\Channel;
+use App\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -37,7 +41,6 @@ class VideoController extends Controller
         $data = $request->validated();
 
         if (isset($data['video'])) {
-            $channel->clearMediaCollection('videos');
             try {
                 $video = $channel->addMedia($data['video'])
                     ->withCustomProperties([
@@ -45,6 +48,11 @@ class VideoController extends Controller
                         'percentage'    => 0,
                     ])
                     ->toMediaCollection('videos');
+
+                $this->dispatch(new ConvertForStreaming($video));
+
+                $video['live_url'] = $this->getLiveUrl($video);
+                return VideoResource::make($video);
             } catch (FileDoesNotExist $e) {
                 throw ValidationException::withMessages([
                     'video' => 'File does not exists.'
@@ -54,13 +62,9 @@ class VideoController extends Controller
                     'video' => 'File is Too Big.'
                 ]);
             }
-
-            $this->dispatch(new ConvertForStreaming($video));
         }
 
-        $channel->append('videos');
-
-        return ChannelResource::make($channel);
+        return response('', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -69,9 +73,10 @@ class VideoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Media $video): JsonResource
     {
-        //
+        $video['live_url'] = $this->getLiveUrl($video);
+        return VideoResource::make($video);
     }
 
     /**
@@ -95,5 +100,10 @@ class VideoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function getLiveUrl($video): string
+    {
+        return Storage::url("videos/{$video->id}/{$video->id}.m3u8");
     }
 }

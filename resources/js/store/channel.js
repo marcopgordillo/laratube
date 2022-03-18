@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import numeral from 'numeral'
 import { API } from '@/services'
+import {nextTick} from "vue";
 
 const useChannelStore = defineStore('channel', {
   state: () => ({
@@ -11,13 +12,14 @@ const useChannelStore = defineStore('channel', {
       message: null,
     },
     loading: false,
+    uploads: [],
     progress: {},
+    intervals: {},
   }),
   getters: {
     getChannel: state => state.channel,
     getNotification: state => state.notification,
     getLoading: state => state.loading,
-    getProgress: state => state.progress,
     getSubscriptions: state => state.channel.subscriptions
                                 ? numeral(state.channel.subscriptions).format('0a')
                                 : null,
@@ -49,19 +51,42 @@ const useChannelStore = defineStore('channel', {
         this.loading = false
       }
     },
-    async uploadVideo(payload) {
-      try {
-        await API.post(`/channels/${this.channel.id}/video`, payload, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (event) => {
-            this.progress[payload.get('title')] = Math.ceil((event.loaded / event.total) * 100)
+    async uploadVideos(payload) {
+      payload.map(async (video) => {
+        this.uploads = [
+          ...this.uploads,
+          {
+            title: video.name,
           }
-        })
-      } catch (err) {
-        throw err
-      }
+        ]
+        this.progress[video.name] = 0
+        const form = new FormData()
+        form.append('video', video)
+        form.append('title', video.name)
+
+        try {
+          const { data } = await API.post(`/channels/${this.channel.id}/videos`, form, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (event) => {
+              this.progress[video.name] = Math.ceil((event.loaded / event.total) * 100)
+            }
+          })
+
+          this.uploads = this.uploads.map(v => v.title === data.data.title ? data.data : v)
+
+          this.intervals[data.data.id] = setInterval(async () => {
+            const { data: { data: video } } = await API.get(`videos/${data.data.id}`)
+            if (video.percentage === 100) {
+              clearInterval(this.intervals[video.id])
+            }
+            this.uploads = this.uploads.map(v => v.id === video.id ? video : v)
+          }, 3000)
+        } catch (err) {
+          throw err
+        }
+      })
     },
     async toggleSubscribe() {
       this.loading = true
